@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
     credentials:true,
-    origin:'http://localhost:5173',
+    origin:'http://127.0.0.1:5173',
 }));
 
 console.log(process.env.MONGO_URL);
@@ -39,7 +39,7 @@ function getUserDataFromToken(req)
 
 
 
-app.get('/api/test',(req,res) => {
+app.get('/test',(req,res) => {
     res.json('test ok');
 })
 app.post('/register',async (req,res)=> {
@@ -59,7 +59,7 @@ app.post('/register',async (req,res)=> {
 });
 
 
-app.post('/api/login', async (req,res)=>{
+app.post('/login', async (req,res)=>{
     const{email,password} = req.body;
     const userDoc=await User.findOne({email});
     if(userDoc)
@@ -84,7 +84,7 @@ app.post('/api/login', async (req,res)=>{
 
 });
 
-app.get('/api/profile',(req,res) => {
+app.get('/profile',(req,res) => {
     const {token} = req.cookies;
     if(token)
     {
@@ -101,12 +101,12 @@ app.get('/api/profile',(req,res) => {
     }
 })
 
-app.post('/api/logout',(req,res) => {
+app.post('/logout',(req,res) => {
     res.cookie('token','').json(true);
 
 })
 
-app.post('/api/upload-by-link',async (req,res)=>{
+app.post('/upload-by-link',async (req,res)=>{
     const {link} = req.body;
     const newName = 'photo'+Date.now() + '.jpg';
     await imageDownloader.image({
@@ -117,7 +117,7 @@ app.post('/api/upload-by-link',async (req,res)=>{
 })
 
 const photosMiddleware=multer({dest:'uploads/'});
-app.post('/api/upload',photosMiddleware.array('photos',100),(req,res) =>{
+app.post('/upload',photosMiddleware.array('photos',100),(req,res) =>{
     const uploadedFiles=[];
     for(let i=0;i<req.files.length;i++)
         {
@@ -131,7 +131,7 @@ app.post('/api/upload',photosMiddleware.array('photos',100),(req,res) =>{
     res.json(uploadedFiles);
 })
 
-app.post('/api/places',(req,res)=>{
+app.post('/places',(req,res)=>{
     const {token} = req.cookies;
     const{title, address, addedPhotos, description, perks, extraInfo, checkIn, checkOut, maxguests, price,} = req.body;
     jwt.verify(token,jwtSecret,{}, async(err,userData)=>{
@@ -143,18 +143,18 @@ app.post('/api/places',(req,res)=>{
         res.json(placeDoc);
     });
 });
-app.get('/api/user-places',(req,res) => {
+app.get('/user-places',(req,res) => {
     const {token} = req.cookies;
     jwt.verify(token,jwtSecret,{}, async (err,userData)=>{
         const{id}=userData;
         res.json(await Place.find({owner:id}));
     });
 })
-app.get('/api/places/:id',async (req,res)=>{
+app.get('/places/:id',async (req,res)=>{
     const {id}=req.params;
     res.json(await Place.findById(id));
 })
-app.put('/api/places/',async (req,res) =>{
+app.put('/places/',async (req,res) =>{
     const {token} = req.cookies;
     const{id,title, address, addedPhotos, description, perks, extraInfo, checkIn, checkOut, maxguests, price,} = req.body;
     jwt.verify(token,jwtSecret,{}, async (err,userData)=>{
@@ -168,11 +168,11 @@ app.put('/api/places/',async (req,res) =>{
     });
 });
 
-app.get('/api/places',async (req,res)=>{
+app.get('/places',async (req,res)=>{
     res.json(await Place.find());
 })
 
-app.post('/api/bookings',async(req,res)=>{
+app.post('/bookings',async(req,res)=>{
     const userData = await getUserDataFromToken(req);
     const{place,checkIn,checkOut,numberOfGuests,name,phone,price} = req.body;
     BookingModel.create({
@@ -183,13 +183,13 @@ app.post('/api/bookings',async(req,res)=>{
         throw err;
     });
 });
-app.get('/api/bookings',async (req,res)=>{
+app.get('/bookings',async (req,res)=>{
     
     const userData= await getUserDataFromToken(req);
     res.json(await BookingModel.find({user:userData.id}).populate('place'));
     
 })
-app.post('/api/delete-hotel',async(req,res)=>{
+app.post('/delete-hotel',async(req,res)=>{
     const{id}=req.body;
     try {
            await Place.deleteOne({_id:id});
