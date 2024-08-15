@@ -40,7 +40,7 @@ function getUserDataFromToken(req)
 
 
 
-app.get('/api/test',(req,res) => {
+app.get('/',(req,res) => {
     res.json('test ok');
 })
 app.post('/api/register',async (req,res)=> {
