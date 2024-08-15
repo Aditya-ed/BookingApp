@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
     credentials:true,
-    origin:'https://booking-app-api-chi.vercel.app/',
+    origin:'https://booking-app-client-mu.vercel.app',
     methods: ["POST","GET"]
 }));
 
