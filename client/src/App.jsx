@@ -13,7 +13,7 @@ import PlacePage from './pages/PlacePage.jsx'
 import BookingsPage from './pages/BookingsPage.jsx'
 import BookingPage from './pages/BookingPage.jsx'
 
-axios.defaults.baseURL='https://booking-app-indol-delta.vercel.app';
+axios.defaults.baseURL='http://127.0.0.1:5173';
 axios.defaults.withCredentials = true;
 
 function App() {
