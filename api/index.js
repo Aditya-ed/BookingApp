@@ -22,6 +22,7 @@ app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
     credentials:true,
     origin:'https://booking-app-indol-delta.vercel.app',
+    methods: ["POST","GET"]
 }));
 
 console.log(process.env.MONGO_URL);
